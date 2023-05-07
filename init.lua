@@ -126,7 +126,6 @@ require('lazy').setup({
       },
     },
   },
-
   {
     "jose-elias-alvarez/null-ls.nvim",
     config = function()
@@ -138,6 +137,11 @@ require('lazy').setup({
           null_ls.builtins.code_actions.eslint_d,
           null_ls.builtins.formatting.eslint_d,
         },
+        on_attach = function(client)
+          if client.supports_method("textDocument/formatting") then
+            vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.format({async=false})")
+          end
+        end,
       })
     end
   },
@@ -188,7 +192,7 @@ require('lazy').setup({
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
-  require 'plugins.autoformat',
+  -- require 'plugins.autoformat',
   -- require 'kickstart.plugins.debug',
 
   -- NOTE: The import below automatically adds your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -474,7 +478,6 @@ local mason_lspconfig = require 'mason-lspconfig'
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
-
 mason_lspconfig.setup_handlers {
   function(server_name)
     require('lspconfig')[server_name].setup {
