@@ -80,7 +80,17 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
-
+  {
+    'declancm/cinnamon.nvim',
+    config = function() require('cinnamon').setup({
+      default_keymaps = true,
+      extra_keymaps = true,
+      extended_keymaps = true,
+      always_scroll = true,
+      centered = true,
+      scroll_limit = -1
+    }) end
+  },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -205,7 +215,6 @@ require('lazy').setup({
   --    to get rid of the warning telling you that there are not plugins in `lua/custom/plugins/`.
 }, {})
 
-require 'options'
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -541,5 +550,12 @@ cmp.setup {
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
 
+vim.api.nvim_set_keymap("", ";", "l", { noremap = true })
+vim.api.nvim_set_keymap("", "l", "k", { noremap = true })
+vim.api.nvim_set_keymap("", "k", "j", { noremap = true })
+vim.api.nvim_set_keymap("", "j", "h", { noremap = true })
+vim.api.nvim_set_keymap("", "h", ";", { noremap = true })
+
+require 'options'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
