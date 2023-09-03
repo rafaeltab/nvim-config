@@ -208,10 +208,10 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
+  group = highlight_group,
   callback = function()
     vim.highlight.on_yank()
   end,
-  group = highlight_group,
   pattern = '*',
 })
 
@@ -304,12 +304,12 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = "Go to next diagnos
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
--- Format keymap
-vim.keymap.set('n', '<leader>f', format, { desc = "[F]ormat" })
-
 vim.diagnostic.config({
   underline = true
 })
+
+-- Format keymap
+vim.keymap.set('n', '<leader>f', format, { desc = "[F]ormat" })
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
