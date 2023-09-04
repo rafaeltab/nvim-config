@@ -1,3 +1,5 @@
+require 'plugins.completion'
+
 function setup(plugins)
   -- The base configuration for nvim and vscode-nvim
   -- Set <space> as the leader key
@@ -35,10 +37,23 @@ function setup(plugins)
     'tpope/vim-fugitive',
     'tpope/vim-rhubarb',
 
-    -- Detect tabstop and shiftwidth automatically
+    {
+      -- Adds git releated signs to the gutter, as well as utilities for managing changes
+      'lewis6991/gitsigns.nvim',
+      opts = {
+        -- See `:help gitsigns.txt`
+        signs = {
+          add = { text = '+' },
+          change = { text = '~' },
+          delete = { text = '_' },
+          topdelete = { text = '‾' },
+          changedelete = { text = '~' },
+        },
+      },
+    },
     'tpope/vim-sleuth',
+    -- Detect tabstop and shiftwidth automatically,
     "ThePrimeagen/vim-be-good",
-    -- NOTE: This is where your plugins related to LSP can be installed.
     --  The configuration is done below. Search for lspconfig to find it below.
     {
       -- LSP Configuration & Plugins
@@ -57,28 +72,10 @@ function setup(plugins)
         'folke/neodev.nvim',
       },
     },
-    {
-      -- Autocompletion
-      'hrsh7th/nvim-cmp',
-      dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-    },
 
-    -- Useful plugin to show you pending keybinds.
+    -- NOTE: This is where your plugins related to LSP can be installed.,
     { 'folke/which-key.nvim',          opts = {} },
-    {
-      -- Adds git releated signs to the gutter, as well as utilities for managing changes
-      'lewis6991/gitsigns.nvim',
-      opts = {
-        -- See `:help gitsigns.txt`
-        signs = {
-          add = { text = '+' },
-          change = { text = '~' },
-          delete = { text = '_' },
-          topdelete = { text = '‾' },
-          changedelete = { text = '~' },
-        },
-      },
-    },
+    -- Useful plugin to show you pending keybinds.,
 
 
     {
@@ -156,8 +153,8 @@ function setup(plugins)
         pcall(require('nvim-treesitter.install').update { with_sync = true })
       end,
     },
-    plugins
-
+    plugins,
+    completion.plugins()
   }, {})
 
   -- [[ Basic Keymaps ]]
@@ -211,7 +208,7 @@ function setup(plugins)
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
-    highlight = { enable = treesitter_highlight  },
+    highlight = { enable = treesitter_highlight },
     indent = { enable = true, disable = { 'python' } },
     incremental_selection = {
       enable = true,
@@ -394,56 +391,7 @@ function setup(plugins)
     end,
   }
 
-  -- nvim-cmp setup
-  local cmp = require 'cmp'
-  local luasnip = require 'luasnip'
-
-  luasnip.config.setup {}
-
-  cmp.setup {
-    snippet = {
-      expand = function(args)
-        luasnip.lsp_expand(args.body)
-      end,
-    },
-    mapping = cmp.mapping.preset.insert {
-      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
-      ['<C-e>'] = cmp.mapping(function()
-        if cmp.visible() then
-          cmp.abort()
-        else
-          cmp.complete()
-        end
-      end),
-      ['<CR>'] = cmp.mapping.confirm {
-        behavior = cmp.ConfirmBehavior.Replace,
-        select = true,
-      },
-      ['<Tab>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_next_item()
-        elseif luasnip.expand_or_jumpable() then
-          luasnip.expand_or_jump()
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
-      ['<S-Tab>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_prev_item()
-        elseif luasnip.jumpable(-1) then
-          luasnip.jump(-1)
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
-    },
-    sources = {
-      { name = 'nvim_lsp' },
-      { name = 'luasnip' },
-    },
-  }
+  completion.post_plugins()
 
   vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
 
