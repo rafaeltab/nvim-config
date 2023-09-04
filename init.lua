@@ -13,7 +13,15 @@ setup({
         scroll_limit = -1
       })
     end
+  },
+  {
+    -- Theme inspired by Atom
+    'martinsione/darkplus.nvim',
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme 'darkplus'
+    end,
   }
 })
--- vim.opt.termguicolors = false
+vim.opt.termguicolors = true
 -- vim: ts=2 sts=2 sw=2 et

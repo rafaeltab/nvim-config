@@ -80,14 +80,6 @@ function setup(plugins)
       },
     },
 
-    {
-      -- Theme inspired by Atom
-      'martinsione/darkplus.nvim',
-      priority = 1000,
-      config = function()
-        vim.cmd.colorscheme 'darkplus'
-      end,
-    },
 
     {
       -- Set lualine as statusline
@@ -204,6 +196,12 @@ function setup(plugins)
   vim.keymap.set("n", "<C-n>", function() harpoon_ui.nav_file(3) end)
   vim.keymap.set("n", "<C-s>", function() harpoon_ui.nav_file(4) end)
 
+  local treesitter_highlight = true
+
+  if vim.g.vscode then
+    treesitter_highlight = false
+  end
+
   -- [[ Configure Treesitter ]]
   -- See `:help nvim-treesitter`
   require('nvim-treesitter.configs').setup {
@@ -213,7 +211,7 @@ function setup(plugins)
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
-    highlight = { enable = true },
+    highlight = { enable = treesitter_highlight  },
     indent = { enable = true, disable = { 'python' } },
     incremental_selection = {
       enable = true,
