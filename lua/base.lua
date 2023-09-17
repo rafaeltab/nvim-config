@@ -1,5 +1,13 @@
 require 'plugins.completion'
 
+local map = function(mode, lhs, rhs, opts)
+  local options = { noremap = true, silent = true }
+  if opts then
+    options = vim.tbl_extend("force", options, opts)
+  end
+  vim.keymap.set(mode, lhs, rhs, options)
+end
+
 function setup(plugins)
   -- The base configuration for nvim and vscode-nvim
   -- Set <space> as the leader key
@@ -36,7 +44,12 @@ function setup(plugins)
     -- Git related plugins
     'tpope/vim-fugitive',
     'tpope/vim-rhubarb',
-
+    {
+      'stevearc/oil.nvim',
+      opts = {},
+      -- Optional dependencies
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+    },
     {
       -- Adds git releated signs to the gutter, as well as utilities for managing changes
       'lewis6991/gitsigns.nvim',
@@ -143,7 +156,11 @@ function setup(plugins)
   -- See `:help vim.keymap.set()`
   vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
-  vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
+  -- vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
+  map("n", "<leader>pv", function()
+    local oil = require("oil")
+    oil.open(oil.get_current_dir())
+  end, { desc = "Open Oil file manager in directory of current buffer" })
 
   -- Remap for dealing with word wrap
   vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -318,6 +335,7 @@ function setup(plugins)
     eslint = {},
     tailwindcss = {},
     rust_analyzer = {},
+    bufls = {},
     yamlls = {
       yaml = {
         schemas = {
@@ -354,7 +372,9 @@ function setup(plugins)
   capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
   -- Setup mason so it can manage external tooling
-  require('mason').setup()
+  require('mason').setup({
+    PATH = "prepend"
+  })
 
   -- Ensure the servers above are installed
   local mason_lspconfig = require 'mason-lspconfig'
