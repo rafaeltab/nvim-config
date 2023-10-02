@@ -85,10 +85,8 @@ function setup(plugins)
       },
     },
 
-    -- NOTE: This is where your plugins related to LSP can be installed.,
-    { 'folke/which-key.nvim',          opts = {} },
     -- Useful plugin to show you pending keybinds.,
-
+    { 'folke/which-key.nvim',          opts = {} },
 
     {
       -- Set lualine as statusline
@@ -96,10 +94,10 @@ function setup(plugins)
       -- See `:help lualine.txt`
       opts = {
         options = {
-          icons_enabled = false,
-          theme = 'onedark',
-          component_separators = '|',
-          section_separators = '',
+          icons_enabled = true,
+          theme = 'horizon',
+          component_separators = { left = '', right = '' },
+          section_separators = { left = '', right = '' },
         },
       },
     },
@@ -147,7 +145,7 @@ function setup(plugins)
       end,
     },
     plugins,
-    completion.plugins()
+    completion.plugins(completion)
   }, {})
 
   -- [[ Basic Keymaps ]]
@@ -199,12 +197,15 @@ function setup(plugins)
   -- [[ Configure Treesitter ]]
   -- See `:help nvim-treesitter`
   require('nvim-treesitter.configs').setup {
+    modules = {},
+    sync_install = true,
+    ignore_install = {},
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'yaml',
       'markdown', 'dart' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-    auto_install = false,
+    auto_install = true,
     highlight = { enable = treesitter_highlight },
     indent = { enable = true, disable = { 'python' } },
     incremental_selection = {
@@ -307,8 +308,6 @@ function setup(plugins)
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
     -- See `:help K` for why this keymap
-    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
 
     -- Lesser used LSP functionality
@@ -392,7 +391,7 @@ function setup(plugins)
     end,
   }
 
-  completion.post_plugins()
+  completion.post_plugins(completion)
 
   vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
 
