@@ -1,4 +1,5 @@
 require 'plugins.completion'
+local languages = require 'languages.languages'
 
 local map = function(mode, lhs, rhs, opts)
   local options = { noremap = true, silent = true }
@@ -198,6 +199,10 @@ function setup(plugins)
     treesitter_highlight = false
   end
 
+  local treesitter_languages = vim.list_extend({ 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'vimdoc', 'vim', 'yaml',
+    'markdown' }, languages.treesitter)
+
+
   -- [[ Configure Treesitter ]]
   -- See `:help nvim-treesitter`
   require('nvim-treesitter.configs').setup {
@@ -205,8 +210,7 @@ function setup(plugins)
     sync_install = true,
     ignore_install = {},
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'yaml',
-      'markdown', 'dart' },
+    ensure_installed = treesitter_languages,
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = true,
@@ -301,6 +305,7 @@ function setup(plugins)
       vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
 
+    nmap('K', vim.lsp.buf.hover, 'Hover')
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
@@ -335,8 +340,6 @@ function setup(plugins)
     -- clangd = {},
     -- gopls = {},
     -- pyright = {},
-    eslint = {},
-    tailwindcss = {},
     rust_analyzer = {},
     bufls = {},
     yamlls = {
@@ -358,7 +361,6 @@ function setup(plugins)
         }
       }
     },
-    tsserver = {},
     lua_ls = {
       Lua = {
         workspace = { checkThirdParty = false },
@@ -366,15 +368,9 @@ function setup(plugins)
       },
     },
   }
+  servers = vim.tbl_deep_extend("keep", servers, languages.mason)
 
-  local settings = {
-    servers,
-    dartls = {
-      dart = {
-        lineLength = 120
-      }
-    }
-  }
+  local settings = vim.tbl_deep_extend("keep", servers, languages.settings)
 
   -- Setup neovim lua configuration
   require('neodev').setup()
@@ -405,7 +401,10 @@ function setup(plugins)
   mason_lspconfig.setup_handlers {
     setup_server
   }
-  setup_server("dartls")
+
+  for k, v in pairs(languages.settings) do
+    setup_server(k)
+  end
 
   completion.post_plugins(completion)
 
