@@ -395,12 +395,13 @@ function setup(plugins)
     ensure_installed = vim.tbl_keys(servers),
   }
   function setup_server(server_name)
-      require('lspconfig')[server_name].setup {
-        capabilities = capabilities,
-        on_attach = on_attach,
-        settings = settings[server_name],
-      }
+    require('lspconfig')[server_name].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = settings[server_name],
+    }
   end
+
   mason_lspconfig.setup_handlers {
     setup_server
   }
