@@ -46,7 +46,11 @@ function setup(plugins)
     'tpope/vim-rhubarb',
     {
       'stevearc/oil.nvim',
-      opts = {},
+      opts = {
+        view_options = {
+          show_hidden = true,
+        }
+      },
       -- Optional dependencies
       dependencies = { "nvim-tree/nvim-web-devicons" },
     },
@@ -363,6 +367,15 @@ function setup(plugins)
     },
   }
 
+  local settings = {
+    servers,
+    dartls = {
+      dart = {
+        lineLength = 120
+      }
+    }
+  }
+
   -- Setup neovim lua configuration
   require('neodev').setup()
 
@@ -381,15 +394,17 @@ function setup(plugins)
   mason_lspconfig.setup {
     ensure_installed = vim.tbl_keys(servers),
   }
-  mason_lspconfig.setup_handlers {
-    function(server_name)
+  function setup_server(server_name)
       require('lspconfig')[server_name].setup {
         capabilities = capabilities,
         on_attach = on_attach,
-        settings = servers[server_name],
+        settings = settings[server_name],
       }
-    end,
+  end
+  mason_lspconfig.setup_handlers {
+    setup_server
   }
+  setup_server("dartls")
 
   completion.post_plugins(completion)
 
