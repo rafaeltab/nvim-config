@@ -8,5 +8,5 @@ return {
     }
   },
   plugins = {},
-  treesitter = {'tsx', 'typescript'}
+  treesitter = { 'tsx', 'typescript' }
 }

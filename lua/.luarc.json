@@ -1,6 +1,7 @@
 {
     "diagnostics.globals": [
-        "setup"
+        "setup",
+        "vim"
     ],
     "workspace.library": [
         "/Users/rafaelbieze/.local/share/nvim/lazy/neodev.nvim/types/stable",

@@ -1,6 +1,9 @@
 local dart = require 'languages.dart'
 local typescript = require 'languages.typescript'
-local languages = { dart, typescript }
+local json = require 'languages.json'
+local markdown = require 'languages.markdown'
+local yaml = require 'languages.yaml'
+local languages = { dart, typescript, json, markdown, yaml }
 
 local treesitter = {}
 for _, v in pairs(languages) do

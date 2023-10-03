@@ -10,5 +10,5 @@ return {
     }
   },
   plugins = {},
-  treesitter = {'dart'}
+  treesitter = { 'dart' }
 }

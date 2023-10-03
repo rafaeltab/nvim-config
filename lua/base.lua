@@ -1,6 +1,16 @@
 require 'plugins.completion'
 local languages = require 'languages.languages'
 
+local highlight = {
+  "RainbowRed",
+  "RainbowYellow",
+  "RainbowBlue",
+  "RainbowOrange",
+  "RainbowGreen",
+  "RainbowViolet",
+  "RainbowCyan",
+}
+
 local map = function(mode, lhs, rhs, opts)
   local options = { noremap = true, silent = true }
   if opts then
@@ -33,6 +43,7 @@ function setup(plugins)
     }
   end
   vim.opt.rtp:prepend(lazypath)
+
 
   -- NOTE: Here is where you install your plugins.
   --  You can configure plugins using the `config` key.
@@ -83,7 +94,11 @@ function setup(plugins)
 
         -- Useful status updates for LSP
         -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-        { 'j-hui/fidget.nvim', opts = {} },
+        {
+          'j-hui/fidget.nvim',
+          opts = {},
+          tag = "legacy",
+        },
 
         -- Additional lua configuration, makes nvim stuff amazing!
         'folke/neodev.nvim',
@@ -112,12 +127,9 @@ function setup(plugins)
     {
       -- Add indentation guides even on blank lines
       'lukas-reineke/indent-blankline.nvim',
+      main = "ibl",
       -- Enable `lukas-reineke/indent-blankline.nvim`
       -- See `:help indent_blankline.txt`
-      opts = {
-        char = '┊',
-        show_trailing_blankline_indent = false,
-      },
     },
 
     -- "gc" to comment visual regions/lines
@@ -152,6 +164,29 @@ function setup(plugins)
     plugins,
     completion.plugins(completion)
   }, {})
+
+  local hooks = require "ibl.hooks"
+  -- create the highlight groups in the highlight setup hook, so they are reset
+  -- every time the colorscheme changes
+  hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+    vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+    vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+    vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+    vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+    vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+    vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+    vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+  end)
+  vim.g.rainbow_delimiters = { highlight = highlight }
+  require("ibl").setup {
+    indent = {
+      char = '┊',
+    },
+    scope = {
+      highlight = highlight
+    }
+  }
+  hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
 
   -- [[ Basic Keymaps ]]
 
@@ -199,8 +234,8 @@ function setup(plugins)
     treesitter_highlight = false
   end
 
-  local treesitter_languages = vim.list_extend({ 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'vimdoc', 'vim', 'yaml',
-    'markdown' }, languages.treesitter)
+  local treesitter_languages = vim.list_extend({ 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'vimdoc', 'vim' },
+    languages.treesitter)
 
 
   -- [[ Configure Treesitter ]]
@@ -342,25 +377,6 @@ function setup(plugins)
     -- pyright = {},
     rust_analyzer = {},
     bufls = {},
-    yamlls = {
-      yaml = {
-        schemas = {
-          kubernetes = "*.yaml",
-          ["http://json.schemastore.org/github-workflow"] = ".github/workflows/*",
-          ["http://json.schemastore.org/github-action"] = ".github/action.{yml,yaml}",
-          ["http://json.schemastore.org/ansible-stable-2.9"] = "roles/tasks/*.{yml,yaml}",
-          ["http://json.schemastore.org/prettierrc"] = ".prettierrc.{yml,yaml}",
-          ["http://json.schemastore.org/kustomization"] = "kustomization.{yml,yaml}",
-          ["http://json.schemastore.org/ansible-playbook"] = "*play*.{yml,yaml}",
-          ["http://json.schemastore.org/chart"] = "Chart.{yml,yaml}",
-          ["https://json.schemastore.org/dependabot-v2"] = ".github/dependabot.{yml,yaml}",
-          ["https://json.schemastore.org/gitlab-ci"] = "*gitlab-ci*.{yml,yaml}",
-          ["https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json"] = "*api*.{yml,yaml}",
-          ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "*docker-compose*.{yml,yaml}",
-          ["https://raw.githubusercontent.com/argoproj/argo-workflows/master/api/jsonschema/schema.json"] = "*flow*.{yml,yaml}",
-        }
-      }
-    },
     lua_ls = {
       Lua = {
         workspace = { checkThirdParty = false },
