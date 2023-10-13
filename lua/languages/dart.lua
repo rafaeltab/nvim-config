@@ -5,7 +5,7 @@ return {
       dartls = {
         dart = {
           lineLength = 120
-        }
+        },
       }
     }
   },

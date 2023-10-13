@@ -67,6 +67,27 @@ function setup(plugins)
       dependencies = { "nvim-tree/nvim-web-devicons" },
     },
     {
+      "nvim-neotest/neotest",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        "nvim-treesitter/nvim-treesitter",
+        "antoinemadec/FixCursorHold.nvim",
+        'sidlatau/neotest-dart',
+      },
+      config = function()
+        require("neotest").setup({
+          adapters = {
+            require("neotest-dart") {
+              command = "flutter",
+              use_lsp = true,
+              -- custom_test_method_names = { "test" }
+            }
+          },
+          consumers = {require("neotest").diagnostic, require("neotest").status}
+        })
+      end
+    },
+    {
       -- Adds git releated signs to the gutter, as well as utilities for managing changes
       'lewis6991/gitsigns.nvim',
       opts = {
@@ -80,6 +101,7 @@ function setup(plugins)
         },
       },
     },
+
     'tpope/vim-sleuth',
     -- Detect tabstop and shiftwidth automatically,
     "ThePrimeagen/vim-be-good",
@@ -350,6 +372,16 @@ function setup(plugins)
     nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
     nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+    local neotest =
+        nmap('<leader>tr', function()
+          require("neotest").run.run()
+        end, '[T]est [R]un')
+    nmap('<leader>tf', function()
+      require("neotest").run.run(vim.fn.expand("%"))
+    end, '[T]est [F]ile')
+    nmap('<leader>tds', function()
+      require("neotest").summary.toggle()
+    end, '[T]est [D]isplay [S]ummary')
 
     -- See `:help K` for why this keymap
 
