@@ -80,10 +80,10 @@ function setup(plugins)
             require("neotest-dart") {
               command = "flutter",
               use_lsp = true,
-              -- custom_test_method_names = { "test" }
+              custom_test_method_names = { "blocTest" }
             }
           },
-          consumers = {require("neotest").diagnostic, require("neotest").status}
+          consumers = { require("neotest").diagnostic, require("neotest").status }
         })
       end
     },
@@ -272,7 +272,6 @@ function setup(plugins)
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = true,
     highlight = { enable = treesitter_highlight },
-    indent = { enable = true, disable = { 'python' } },
     incremental_selection = {
       enable = true,
       keymaps = {
@@ -284,7 +283,7 @@ function setup(plugins)
     },
     textobjects = {
       select = {
-        enable = true,
+        enable = false,
         lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
         keymaps = {
           -- You can use the capture groups defined in textobjects.scm
