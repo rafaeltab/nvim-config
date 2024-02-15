@@ -3,7 +3,8 @@ local typescript = require 'languages.typescript'
 local json = require 'languages.json'
 local markdown = require 'languages.markdown'
 local yaml = require 'languages.yaml'
-local languages = { dart, typescript, json, markdown, yaml }
+local make = require 'languages.yaml'
+local languages = { dart, typescript, json, markdown, yaml, make }
 
 local treesitter = {}
 for _, v in pairs(languages) do
@@ -15,10 +16,12 @@ end
 local mason = {}
 local settings = {}
 for _, v in pairs(languages) do
-  if v.lsp.use == "mason" then
-    mason = vim.tbl_deep_extend("keep", mason, v.lsp.mason)
-  else
-    settings = vim.tbl_deep_extend("keep", settings, v.lsp.settings)
+  if v.lsp ~= {} then
+    if v.lsp.use == "mason" then
+      mason = vim.tbl_deep_extend("keep", mason, v.lsp.mason)
+    else
+      settings = vim.tbl_deep_extend("keep", settings, v.lsp.settings)
+    end
   end
 end
 

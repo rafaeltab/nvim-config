@@ -10,7 +10,7 @@ setup({
         extended_keymaps = true,
         always_scroll = true,
         centered = true,
-        scroll_limit = -1
+        scroll_limit = 256,
       })
     end
   },
